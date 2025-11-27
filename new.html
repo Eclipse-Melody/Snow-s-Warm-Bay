@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>幼儿教育英语升级游戏</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+        Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #fdf3e7, #f5f9ff);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 0;
+    }
+
+    .game-wrapper {
+      width: 95%;
+      max-width: 800px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      padding: 24px 22px 26px;
+      box-sizing: border-box;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    /* 新增标签切换样式 */
+    .tab-container {
+      display: flex;
+      gap: 8px;
+      margin: 16px 0;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: none;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+      font-size: 14px;
+      color: #4b5563;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      background: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .level {
+      font-weight: 700;
+      color: #2563eb;
+    }
+
+    .xp-bar-container {
+      margin-top: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 12px;
+      position: relative;
+    }
+
+    .xp-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #60a5fa, #22c55e);
+      transition: width 0.3s ease;
+    }
+
+    .xp-text {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .section-title {
+      margin-top: 16px;
+      font-size: 15px;
+      color: #6b7280;
+    }
+
+    .question-card {
+      margin-top: 8px;
+      background: #f9fafb;
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .scene-tag {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #b91c1c;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .cn-sentence {
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: #111827;
+    }
+
+    .hint {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .options {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease,
+        border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .option-btn:hover {
+      background: #eff6ff;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 10px rgba(37, 99, 235, 0.12);
+    }
+
+    .option-btn.correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #166534;
+    }
+
+    .option-btn.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      min-height: 24px;
+      font-size: 14px;
+    }
+
+    .feedback .positive {
+      color: #15803d;
+      font-weight: 600;
+    }
+
+    .feedback .negative {
+      color: #b91c1c;
+      font-weight: 600;
+    }
+
+    .feedback .note {
+      color: #4b5563;
+    }
+
+    .controls {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(55, 65, 81, 0.25);
+    }
+
+    .level-up-banner {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #7c2d12;
+      background: #fffbeb;
+      border-radius: 999px;
+      padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .level-up-banner.hidden {
+      display: none;
+    }
+
+    /* 新增添加题目表单样式 */
+    .add-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+      background: #f9fafb;
+      padding: 16px;
+      border-radius: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .form-input {
+      padding: 8px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-select {
+      padding: 8px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #ffffff;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .success-alert {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .success-alert.show {
+      display: block;
+    }
+
+    .question-count {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #6b7280;
+      background: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 18px;
+      }
+      .game-wrapper {
+        padding: 18px 14px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-wrapper">
+    <div class="header">
+      <div>
+        <div class="title">幼儿教育英语升级游戏</div>
+        <div class="badge">ECE English · Teacher Mode</div>
+      </div>
+    </div>
+
+    <!-- 新增标签切换 -->
+    <div class="tab-container">
+      <button class="tab-btn active" data-tab="quiz">答题模式</button>
+      <button class="tab-btn" data-tab="add">添加题目</button>
+    </div>
+
+    <!-- 答题模式内容 -->
+    <div class="tab-content active" id="quiz">
+      <div class="stats">
+        <div class="stat-item">等级：<span id="level" class="level">1</span></div>
+        <div class="stat-item">得分：<span id="score">0</span></div>
+        <div class="stat-item">连续答对：<span id="streak">0</span></div>
+        <div class="question-count" id="questionCount">题库总数：0</div>
+      </div>
+
+      <div class="xp-bar-container">
+        <div id="xpBar" class="xp-bar"></div>
+      </div>
+      <div class="xp-text" id="xpText">0 / 5 经验 升级</div>
+
+      <div id="levelUpBanner" class="level-up-banner hidden">
+        ⭐ Level up! 你的幼教英语升级啦～
+      </div>
+
+      <div class="section-title">请根据中文，选择最自然的幼儿教育英语表达：</div>
+
+      <div class="question-card">
+        <div class="scene-tag" id="sceneTag">情景：日常指令</div>
+        <div class="cn-sentence" id="cnSentence">请把玩具收好。</div>
+        <div class="hint" id="hint">提示：可以用在收拾玩具时间 pack away time。</div>
+
+        <div class="options">
+          <button class="option-btn" data-index="0"></button>
+          <button class="option-btn" data-index="1"></button>
+          <button class="option-btn" data-index="2"></button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-secondary" id="btnShowChinese">显示中英对照</button>
+        <button class="btn btn-primary" id="btnNext">下一题 ➜</button>
+      </div>
+    </div>
+
+    <!-- 添加题目内容 -->
+    <div class="tab-content" id="add">
+      <div class="section-title">添加新的幼教英语题目（自动保存到本地）：</div>
+      <div class="add-form" id="addQuestionForm">
+        <div class="form-group">
+          <label class="form-label">情景分类（如：日常指令/情绪引导）</label>
+          <input type="text" class="form-input" id="newScene" placeholder="例如：手工活动/如厕引导" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">中文句子</label>
+          <input type="text" class="form-input" id="newCn" placeholder="例如：请把胶水递给我" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">选项1（正确答案）</label>
+          <input type="text" class="form-input" id="newOpt1" placeholder="例如：Please pass me the glue" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">选项2（干扰项）</label>
+          <input type="text" class="form-input" id="newOpt2" placeholder="例如：Please give me glue" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">选项3（干扰项）</label>
+          <input type="text" class="form-input" id="newOpt3" placeholder="例如：Give glue me" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">正确答案索引</label>
+          <select class="form-select" id="newCorrectIndex" required>
+            <option value="0">选项1</option>
+            <option value="1">选项2</option>
+            <option value="2">选项3</option>
+          </select>
+          <div class="form-hint">注意：正确答案对应上面的选项序号（默认选选项1）</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">备注/知识点（可选）</label>
+          <input type="text" class="form-input" id="newNote" placeholder="例如：pass sb. sth. 是正确的双宾语结构">
+        </div>
+        <button type="submit" class="btn btn-primary">添加题目</button>
+        <div class="success-alert" id="successAlert">✅ 题目添加成功！已加入题库</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // ====== 扩展默认题库（新增30+幼教场景题目）======
+      const defaultQuestions = [
+        // 原有题目
+        {
+          scene: "日常指令 / 收拾玩具",
+          cn: "请把玩具收好。",
+          options: [
+            "Please pack away the toys.",
+            "Please read the book loudly.",
+            "Please go to sleep now."
+          ],
+          correctIndex: 0,
+          note: "幼儿园里常说 pack away toys / pack away please。"
+        },
+        {
+          scene: "教室安全 / 室内走路",
+          cn: "请用走路的脚，不要跑。",
+          options: [
+            "Use your walking feet, please.",
+            "Use your quiet hands, please.",
+            "Use your big voice, please."
+          ],
+          correctIndex: 0,
+          note: "walking feet 是幼教里很常见的表达，比 don’t run 更温和。"
+        },
+        {
+          scene: "声音控制 / 室内音量",
+          cn: "现在要用小小声，说话轻一点。",
+          options: [
+            "Use your inside voice.",
+            "Use your outside voice.",
+            "Use your singing voice."
+          ],
+          correctIndex: 0,
+          note: "inside voice = 室内的小声，outside voice = 户外可以大点声。"
+        },
+        {
+          scene: "集体活动 / 圈圈时间",
+          cn: "请坐到地毯上，我们要开始圈圈时间了。",
+          options: [
+            "Please sit on the mat. It’s circle time.",
+            "Please sit on the chair. It’s lunch time.",
+            "Please sit by the door. It’s home time."
+          ],
+          correctIndex: 0,
+          note: "mat time / circle time 都可以，用在故事、问候、唱歌等。"
+        },
+        {
+          scene: "户外活动 / 出去玩",
+          cn: "我们要去户外玩了，排好队。",
+          options: [
+            "We are going outside. Please line up.",
+            "We are going to bed. Please lie down.",
+            "We are going to the office. Please be quiet."
+          ],
+          correctIndex: 0,
+          note: "line up 是老师常用排队用语。"
+        },
+        {
+          scene: "洗手 / 卫生习惯",
+          cn: "吃点心前先洗手。",
+          options: [
+            "Wash your hands before morning tea.",
+            "Wash your feet before morning tea.",
+            "Wash your toys before morning tea."
+          ],
+          correctIndex: 0,
+          note: "morning tea / afternoon tea 在澳洲幼教很常见。"
+        },
+        {
+          scene: "如厕 / 换尿片",
+          cn: "我们去换尿片啦。",
+          options: [
+            "Let’s go for a nappy change.",
+            "Let’s go for a toy change.",
+            "Let’s go for a shoes change."
+          ],
+          correctIndex: 0,
+          note: "澳洲常用 nappy，美式多用 diaper。"
+        },
+        {
+          scene: "冲突调解 / 排队轮流",
+          cn: "轮流玩，每个人都有机会。",
+          options: [
+            "Take turns. Everyone will have a turn.",
+            "Don’t touch it. It’s mine.",
+            "You must share all your toys now."
+          ],
+          correctIndex: 0,
+          note: "have a turn 是幼儿常用表达，柔和又清楚。"
+        },
+        {
+          scene: "正向引导 / 鼓励分享",
+          cn: "谢谢你愿意和朋友分享玩具。",
+          options: [
+            "Thank you for sharing the toy with your friend.",
+            "Thank you for taking the toy away.",
+            "Thank you for hiding the toy."
+          ],
+          correctIndex: 0,
+          note: "Thank you for + V-ing 很适合对孩子表达肯定行为。"
+        },
+        {
+          scene: "过渡提醒 / 即将收拾",
+          cn: "还有五分钟就要收拾玩具了。",
+          options: [
+            "Five more minutes and then we will pack away.",
+            "Five more minutes and then we will sleep.",
+            "Five more minutes and then we will go home now."
+          ],
+          correctIndex: 0,
+          note: "Five more minutes and then… 常用来做过渡提醒，减少情绪爆发。"
+        },
+        {
+          scene: "情绪共情",
+          cn: "我看到你现在很难过，你想要一个拥抱吗？",
+          options: [
+            "I can see you feel upset. Would you like a hug?",
+            "Stop crying. You are not a baby.",
+            "Go away and cry by yourself."
+          ],
+          correctIndex: 0,
+          note: "I can see you feel… 是很温柔的情绪共情句型。"
+        },
+        {
+          scene: "规则提醒 / 温和界限",
+          cn: "玩具是用来玩的，不是用来扔的。",
+          options: [
+            "Toys are for playing, not for throwing.",
+            "Toys are for hiding, not for looking.",
+            "Toys are for eating, not for playing."
+          ],
+          correctIndex: 0,
+          note: "…are for V-ing, not for V-ing. 温和又清晰地设定规则。"
+        },
+        {
+          scene: "点名 / 到园问候",
+          cn: "早上好，欢迎来到幼儿园。",
+          options: [
+            "Good morning, welcome to kindergarten.",
+            "Good night, welcome to kindergarten.",
+            "Goodbye, welcome to kindergarten."
+          ],
+          correctIndex: 0,
+          note: "也可以用 centre / preschool 等根据你所在机构调整。"
+        },
+        {
+          scene: "故事时间",
+          cn: "我们要讲故事了，你可以选一本你想听的书。",
+          options: [
+            "It’s story time. You can choose a book you’d like to listen to.",
+            "It’s cleaning time. You can throw away a book.",
+            "It’s running time. You can run with a book."
+          ],
+          correctIndex: 0,
+          note: "It’s story time. / Choose a book. 是故事环节常用表达。"
+        },
+        {
+          scene: "手工与感统活动",
+          cn: "这是感官游戏，可以用手去摸一摸、捏一捏。",
+          options: [
+            "This is a sensory activity. You can touch and squish it.",
+            "This is a sleepy activity. You must close your eyes.",
+            "This is a noisy activity. You must shout loudly."
+          ],
+          correctIndex: 0,
+          note: "sensory activity / sensory play 对应感统、感官探索。"
+        },
+        {
+          scene: "家长沟通 / 接孩子",
+          cn: "他今天午睡睡得很好，大概睡了一个半小时。",
+          options: [
+            "He had a good nap today, about one and a half hours.",
+            "He didn’t sleep at all and kept running.",
+            "He was crying all the time during nap time."
+          ],
+          correctIndex: 0,
+          note: "家长沟通时常用 had a good nap / slept well。"
+        },
+        // 新增题目（30+）
+        {
+          scene: "手工活动 / 材料请求",
+          cn: "请把剪刀递给我，小心不要剪到手。",
+          options: [
+            "Please pass me the scissors, be careful not to cut your fingers.",
+            "Give me scissors, don't cut hand.",
+            "Scissors give me, no cut finger."
+          ],
+          correctIndex: 0,
+          note: "pass me sth. 比 give me sth. 更礼貌，be careful not to… 提醒安全。"
+        },
+        {
+          scene: "进餐礼仪 / 自主进食",
+          cn: "慢慢吃，一口一口来，不要着急。",
+          options: [
+            "Eat slowly, take small bites, don’t rush.",
+            "Eat fast, big bites, hurry up.",
+            "Eat quick, one bite, no wait."
+          ],
+          correctIndex: 0,
+          note: "take small bites 是幼教常用表达，提醒细嚼慢咽。"
+        },
+        {
+          scene: "午睡准备 / 脱外套",
+          cn: "午睡时间到了，请把外套脱下来叠好。",
+          options: [
+            "Nap time! Please take off your coat and fold it.",
+            "Sleep time! Take coat off and throw it.",
+            "Bed time! Coat off and put on bed."
+          ],
+          correctIndex: 0,
+          note: "fold it 培养收纳习惯，nap time 是幼儿园午睡专用表达。"
+        },
+        {
+          scene: "情绪引导 / 生气管理",
+          cn: "如果你生气了，可以深呼吸三次。",
+          options: [
+            "If you feel angry, you can take three deep breaths.",
+            "You angry, breathe three times.",
+            "Angry? Breathe deep three."
+          ],
+          correctIndex: 0,
+          note: "take deep breaths 是幼儿情绪管理的常用方法。"
+        },
+        {
+          scene: "户外安全 / 防晒提醒",
+          cn: "出去玩之前要涂防晒霜，戴上你的帽子。",
+          options: [
+            "Put on sunscreen and wear your hat before going outside.",
+            "Wear sun cream and hat go outside.",
+            "Sun cream on, hat wear, go play."
+          ],
+          correctIndex: 0,
+          note: "put on sunscreen / wear your hat 是标准表达，澳洲幼教高频使用。"
+        },
+        {
+          scene: "如厕训练 / 主动表达",
+          cn: "如果你想上厕所，可以举手告诉我。",
+          options: [
+            "If you need to go to the toilet, you can put up your hand and tell me.",
+            "Want toilet? Raise hand tell me.",
+            "Toilet need? Hand up say me."
+          ],
+          correctIndex: 0,
+          note: "need to go to the toilet 比 want to pee 更礼貌，put up your hand 规范表达。"
+        },
+        {
+          scene: "分享玩具 / 轮流使用",
+          cn: "你可以玩五分钟，然后换小明玩。",
+          options: [
+            "You can play with it for five minutes, then it's Xiao Ming's turn.",
+            "You play five minute, then Xiao Ming play.",
+            "Five minute play, then Xiao Ming turn."
+          ],
+          correctIndex: 0,
+          note: "it's sb.'s turn 是轮流的标准表达，for five minutes 强调时长。"
+        },
+        {
+          scene: "清洁习惯 / 擦桌子",
+          cn: "吃完点心后，请用湿巾把桌子擦干净。",
+          options: [
+            "After morning tea, please wipe the table clean with a wet wipe.",
+            "Eat snack, wipe table with wet paper.",
+            "Finish food, clean table use wet towel."
+          ],
+          correctIndex: 0,
+          note: "wet wipe 是湿巾的常用说法，wipe sth. clean 强调擦干净的结果。"
+        },
+        {
+          scene: "集体游戏 / 听指令做动作",
+          cn: "当我说停的时候，所有人都要停下来哦。",
+          options: [
+            "When I say stop, everyone needs to stop.",
+            "I say stop, everyone stop.",
+            "Say stop, all people stop."
+          ],
+          correctIndex: 0,
+          note: "when I say… 引导条件状语从句，needs to… 温和的指令。"
+        },
+        {
+          scene: "绘本阅读 / 提问互动",
+          cn: "你看到图片里有一只小兔子吗？它在做什么呀？",
+          options: [
+            "Do you see a little rabbit in the picture? What is it doing?",
+            "You see rabbit in picture? It do what?",
+            "See rabbit? What it doing?"
+          ],
+          correctIndex: 0,
+          note: "Do you see…? 比 See…? 更礼貌，现在进行时提问动作。"
+        },
+        {
+          scene: "感统游戏 / 触觉箱",
+          cn: "把手伸进箱子里，猜猜你摸到了什么东西？",
+          options: [
+            "Put your hand into the box and guess what you're touching.",
+            "Hand in box, guess touch what?",
+            "Put hand box, guess what touch."
+          ],
+          correctIndex: 0,
+          note: "put your hand into… 规范表达，现在进行时强调正在进行的动作。"
+        },
+        {
+          scene: "穿脱鞋子 / 自理能力",
+          cn: "请把鞋子脱下来，放在鞋柜里你的位置上。",
+          options: [
+            "Please take off your shoes and put them in your spot in the shoe rack.",
+            "Take shoes off, put in shoe cabinet your place.",
+            "Shoes off, put shoe rack your spot."
+          ],
+          correctIndex: 0,
+          note: "your spot 强调专属位置，shoe rack 是鞋柜的常用说法。"
+        },
+        {
+          scene: "情绪识别 / 表达感受",
+          cn: "你看起来很开心，能和我分享一下为什么吗？",
+          options: [
+            "You look happy, can you share why with me?",
+            "You look happy, tell me why?",
+            "Happy? Share why with me?"
+          ],
+          correctIndex: 0,
+          note: "look happy 描述外在情绪，can you… 邀请式提问更友好。"
+        },
+        {
+          scene: "喝水提醒 / 补充水分",
+          cn: "如果你口渴了，可以去喝水区接水喝。",
+          options: [
+            "If you're thirsty, you can get water from the drinking area.",
+            "You thirsty, go water area drink water.",
+            "Thirsty? Go drink water area."
+          ],
+          correctIndex: 0,
+          note: "drinking area 是幼儿园喝水区的标准表达，get water 比 drink water 更准确。"
+        },
+        {
+          scene: "整理书包 / 离园准备",
+          cn: "请把你的水杯和换洗衣物放进书包里。",
+          options: [
+            "Please put your water bottle and spare clothes into your bag.",
+            "Put cup and change clothes in bag.",
+            "Cup and clothes put into bag."
+          ],
+          correctIndex: 0,
+          note: "spare clothes 是换洗衣物的常用说法，water bottle 比 cup 更具体。"
+        },
+        {
+          scene: "植物照料 / 责任感培养",
+          cn: "记得每天给你的小盆栽浇一点点水哦。",
+          options: [
+            "Remember to water your little plant a little every day.",
+            "Remember water your plant little every day.",
+            "Every day water plant a little."
+          ],
+          correctIndex: 0,
+          note: "remember to do sth. 提醒动作，a little 强调适量浇水。"
+        },
+        {
+          scene: "排队洗手 / 秩序引导",
+          cn: "请排队洗手，一个跟着一个，不要插队。",
+          options: [
+            "Please line up to wash hands, one after another, don't cut in line.",
+            "Line up wash hands, one follow one, no cut line.",
+            "Wash hands line, one by one, no jump queue."
+          ],
+          correctIndex: 0,
+          note: "one after another 比 one by one 更强调顺序，cut in line 是插队的标准表达。"
+        },
+        {
+          scene: "音乐活动 / 乐器使用",
+          cn: "轻轻敲鼓，不要太用力，保护我们的乐器。",
+          options: [
+            "Tap the drum gently, don't hit it too hard, take care of our instruments.",
+            "Light hit drum, no hard, protect instrument.",
+            "Tap drum soft, no strong, care instrument."
+          ],
+          correctIndex: 0,
+          note: "tap gently / hit hard 是力度的对比表达，take care of 强调爱护。"
+        },
+        {
+          scene: "生日庆祝 / 祝福表达",
+          cn: "今天是莉莉的生日，我们一起唱生日快乐歌吧！",
+          options: [
+            "Today is Lily's birthday, let's sing Happy Birthday together!",
+            "Today Lily birthday, sing Happy Birthday together!",
+            "Lily birthday today, we sing birthday song!"
+          ],
+          correctIndex: 0,
+          note: "sb.'s birthday 名词所有格，let's… 邀请式表达更积极。"
+        },
+        {
+          scene: "天气变化 / 增减衣物",
+          cn: "外面下雨了，出门要穿上你的雨衣和雨靴。",
+          options: [
+            "It's raining outside, put on your raincoat and rain boots when going out.",
+            "Outside rain, wear raincoat and boots go out.",
+            "Rain outside, put raincoat and boots wear."
+          ],
+          correctIndex: 0,
+          note: "raincoat / rain boots 是雨具的标准说法，it's raining 描述天气。"
+        },
+        {
+          scene: "解决冲突 / 道歉引导",
+          cn: "如果你不小心碰到了朋友，要说对不起哦。",
+          options: [
+            "If you accidentally bump into a friend, say sorry.",
+            "You touch friend by mistake, say sorry.",
+            "Accident touch friend, say sorry."
+          ],
+          correctIndex: 0,
+          note: "accidentally bump into 比 touch by mistake 更自然，say sorry 简洁明了。"
+        },
+        {
+          scene: "绘本延伸 / 角色扮演",
+          cn: "你想扮演故事里的小熊吗？我来当熊妈妈。",
+          options: [
+            "Do you want to be the little bear in the story? I'll be Mama Bear.",
+            "You want play bear in story? I be Mama Bear.",
+            "Want be bear? I am Mama Bear."
+          ],
+          correctIndex: 0,
+          note: "want to be… 表达扮演角色，Mama Bear 首字母大写强调角色名。"
+        },
+        {
+          scene: "如厕后 / 洗手步骤",
+          cn: "上完厕所后，要记得用洗手液搓出泡泡哦。",
+          options: [
+            "After using the toilet, remember to lather up with hand soap.",
+            "After toilet, remember use soap make bubble.",
+            "Toilet finish, use soap rub bubble."
+          ],
+          correctIndex: 0,
+          note: "lather up 是搓出泡沫的专业表达，hand soap 比 soap 更具体。"
+        },
+        {
+          scene: "户外游戏 / 捡垃圾",
+          cn: "玩完后请把地上的垃圾捡起来，扔进垃圾桶。",
+          options: [
+            "After playing, please pick up the trash on the ground and throw it in the bin.",
+            "Play finish, pick trash on ground throw bin.",
+            "After play, pick up garbage throw trash can."
+          ],
+          correctIndex: 0,
+          note: "bin 是澳洲常用垃圾桶说法，pick up the trash 规范表达。"
+        },
+        {
+          scene: "午睡起床 / 穿衣服",
+          cn: "睡醒了吗？自己试着把衣服穿好哦。",
+          options: [
+            "Did you wake up? Try to put on your clothes by yourself.",
+            "Wake up? Try wear clothes by yourself.",
+            "Awake? Try put clothes on self."
+          ],
+          correctIndex: 0,
+          note: "by yourself 强调独立完成，try to do sth. 鼓励尝试。"
+        },
+        {
+          scene: "美术创作 / 颜色认知",
+          cn: "你想用红色还是蓝色来画天空呢？",
+          options: [
+            "Do you want to use red or blue to paint the sky?",
+            "You want use red or blue paint sky?",
+            "Want red or blue draw sky?"
+          ],
+          correctIndex: 0,
+          note: "use sth. to do sth. 表达工具用途，paint the sky 比 draw sky 更准确。"
+        },
+        {
+          scene: "安全规则 / 不碰电源",
+          cn: "电源插座很危险，小手不要碰哦。",
+          options: [
+            "Power sockets are dangerous, don't touch them with your little hands.",
+            "Socket dangerous, little hand no touch.",
+            "Power plug dangerous, don't touch."
+          ],
+          correctIndex: 0,
+          note: "power sockets 是电源插座的标准说法，little hands 更亲切。"
+        },
+        {
+          scene: "社交礼仪 / 打招呼",
+          cn: "看到老师要说早上好，看到朋友要说你好。",
+          options: [
+            "Say good morning to teachers and hello to friends when you see them.",
+            "See teacher say good morning, see friend say hello.",
+            "Teacher see say good morning, friend see say hello."
+          ],
+          correctIndex: 0,
+          note: "when you see them 补充场景，使句子更完整。"
+        },
+        {
+          scene: "感统训练 / 平衡木",
+          cn: "慢慢走平衡木，张开手臂保持平衡。",
+          options: [
+            "Walk slowly on the balance beam and stretch out your arms to keep balance.",
+            "Slow walk balance beam, open arms keep balance.",
+            "Walk slow on beam, stretch arms balance."
+          ],
+          correctIndex: 0,
+          note: "balance beam 是平衡木的专业说法，stretch out your arms 强调张开手臂。"
+        },
+        {
+          scene: "点心时间 / 食物分享",
+          cn: "如果你不喜欢吃饼干，可以和朋友交换哦。",
+          options: [
+            "If you don't like cookies, you can swap with a friend.",
+            "You don't like cookie, swap with friend.",
+            "No like biscuit, exchange with friend."
+          ],
+          correctIndex: 0,
+          note: "swap 比 exchange 更口语化，适合幼儿场景。"
+        },
+        {
+          scene: "离园道别 / 礼貌用语",
+          cn: "再见，明天见！路上注意安全。",
+          options: [
+            "Goodbye, see you tomorrow! Be safe on your way home.",
+            "Bye, see tomorrow! Road safe.",
+            "Goodbye, tomorrow see! Go home safe."
+          ],
+          correctIndex: 0,
+          note: "see you tomorrow 规范表达，be safe on your way home 完整道别祝福。"
+        }
+      ];
+
+      // ====== 本地存储管理 ======
+      function getQuestions() {
+        const saved = localStorage.getItem("eceEnglishQuestions");
+        return saved ? JSON.parse(saved) : defaultQuestions;
+      }
+
+      function saveQuestions(questions) {
+        localStorage.setItem("eceEnglishQuestions", JSON.stringify(questions));
+        updateQuestionCount();
+      }
+
+      function addNewQuestion(newQ) {
+        const questions = getQuestions();
+        questions.push(newQ);
+        saveQuestions(questions);
+        return questions;
+      }
+
+      function updateQuestionCount() {
+        const count = getQuestions().length;
+        document.getElementById("questionCount").textContent = `题库总数：${count}`;
+      }
+
+      // ====== 游戏状态管理 ======
+      let currentQuestion = null;
+      let score = 0;
+      let streak = 0;
+      let level = 1;
+      let xp = 0;
+      let xpToNext = 5;
+      let hasAnswered = false;
+
+      // 元素获取
+      const levelEl = document.getElementById("level");
+      const scoreEl = document.getElementById("score");
+      const streakEl = document.getElementById("streak");
+      const xpBarEl = document.getElementById("xpBar");
+      const xpTextEl = document.getElementById("xpText");
+      const levelUpBanner = document.getElementById("levelUpBanner");
+
+      const sceneTagEl = document.getElementById("sceneTag");
+      const cnSentenceEl = document.getElementById("cnSentence");
+      const hintEl = document.getElementById("hint");
+      const feedbackEl = document.getElementById("feedback");
+      const optionButtons = document.querySelectorAll(".option-btn");
+
+      const btnNext = document.getElementById("btnNext");
+      const btnShowChinese = document.getElementById("btnShowChinese");
+      const addForm = document.getElementById("addQuestionForm");
+      const successAlert = document.getElementById("successAlert");
+
+      // 标签切换
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      const tabContents = document.querySelectorAll(".tab-content");
+      tabBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const tabId = btn.getAttribute("data-tab");
+          tabBtns.forEach(b => b.classList.remove("active"));
+          tabContents.forEach(c => c.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById(tabId).classList.add("active");
+        });
+      });
+
+      // 工具函数：随机取题
+      function pickRandomQuestion() {
+        const questions = getQuestions();
+        const index = Math.floor(Math.random() * questions.length);
+        return questions[index];
+      }
+
+      // 刷新进度条 & 文本
+      function updateXPBar() {
+        const percent = Math.min(100, (xp / xpToNext) * 100);
+        xpBarEl.style.width = percent + "%";
+        xpTextEl.textContent = xp + " / " + xpToNext + " 经验 升级";
+      }
+
+      // 升级检查
+      function checkLevelUp() {
+        if (xp >= xpToNext) {
+          level++;
+          levelEl.textContent = level;
+          levelUpBanner.classList.remove("hidden");
+
+          // 保留多余经验
+          xp = xp - xpToNext;
+          // 升级所需经验递增
+          xpToNext += 3;
+          updateXPBar();
+
+          // 隐藏升级提示
+          setTimeout(() => {
+            levelUpBanner.classList.add("hidden");
+          }, 2000);
+        } else {
+          updateXPBar();
+        }
+      }
+
+      // 显示当前题目
+      function renderQuestion() {
+        currentQuestion = pickRandomQuestion();
+        hasAnswered = false;
+        feedbackEl.innerHTML = "";
+
+        sceneTagEl.textContent = "情景：" + currentQuestion.scene;
+        cnSentenceEl.textContent = currentQuestion.cn;
+        hintEl.textContent = "提示：与幼儿园场景相关，可以大声读一遍英文选项。";
+
+        // 打乱选项顺序
+        const shuffled = currentQuestion.options
+          .map((text, idx) => ({ text, idx }))
+          .sort(() => Math.random() - 0.5);
+
+        optionButtons.forEach((btn, i) => {
+          const item = shuffled[i];
+          btn.textContent = item.text;
+          btn.dataset.index = item.idx;
+          btn.classList.remove("correct", "wrong");
+          btn.disabled = false;
+        });
+      }
+
+      // 答题逻辑
+      function handleAnswerClick(e) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+
+        const chosenIndex = Number(e.currentTarget.dataset.index);
+        const correctIndex = currentQuestion.correctIndex;
+
+        optionButtons.forEach((btn) => {
+          const idx = Number(btn.dataset.index);
+          btn.disabled = true;
+          if (idx === correctIndex) {
+            btn.classList.add("correct");
+          }
+        });
+
+        if (chosenIndex === correctIndex) {
+          score++;
+          streak++;
+          scoreEl.textContent = score;
+          streakEl.textContent = streak;
+
+          xp += 1;
+          checkLevelUp();
+
+          feedbackEl.innerHTML =
+            '<span class="positive">✔ 太棒了！答对啦。</span> ' +
+            '<span class="note">👩‍🏫 ' +
+            (currentQuestion.note || "") +
+            "</span>";
+        } else {
+          streak = 0;
+          streakEl.textContent = streak;
+
+          optionButtons.forEach((btn) => {
+            const idx = Number(btn.dataset.index);
+            if (idx === chosenIndex && idx !== correctIndex) {
+              btn.classList.add("wrong");
+            }
+          });
+
+          feedbackEl.innerHTML =
+            '<span class="negative">✘ 这句更自然的说法是：</span> ' +
+            '<span class="note">' +
+            currentQuestion.options[correctIndex] +
+            "</span>";
+        }
+      }
+
+      // 显示中英对照
+      function showChineseEnglish() {
+        if (!currentQuestion) return;
+        feedbackEl.innerHTML =
+          '<span class="note">📝 中英对照：</span><br>' +
+          '<span class="note">「' +
+          currentQuestion.cn +
+          "」<br>➡ 「" +
+          currentQuestion.options[currentQuestion.correctIndex] +
+          "」</span>";
+      }
+
+      // 添加题目表单提交
+      addForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const newScene = document.getElementById("newScene").value.trim();
+        const newCn = document.getElementById("newCn").value.trim();
+        const newOpt1 = document.getElementById("newOpt1").value.trim();
+        const newOpt2 = document.getElementById("newOpt2").value.trim();
+        const newOpt3 = document.getElementById("newOpt3").value.trim();
+        const newCorrectIndex = Number(document.getElementById("newCorrectIndex").value);
+        const newNote = document.getElementById("newNote").value.trim();
+
+        // 验证输入
+        if (!newScene || !newCn || !newOpt1 || !newOpt2 || !newOpt3) {
+          alert("请填写所有必填项！");
+          return;
+        }
+
+        // 创建新题目
+        const newQuestion = {
+          scene: newScene,
+          cn: newCn,
+          options: [newOpt1, newOpt2, newOpt3],
+          correctIndex: newCorrectIndex,
+          note: newNote
+        };
+
+        // 保存新题目
+        addNewQuestion(newQuestion);
+
+        // 重置表单
+        addForm.reset();
+
+        // 显示成功提示
+        successAlert.classList.add("show");
+        setTimeout(() => {
+          successAlert.classList.remove("show");
+        }, 2000);
+      });
+
+      // 事件绑定
+      optionButtons.forEach((btn) => {
+        btn.addEventListener("click", handleAnswerClick);
+      });
+
+      btnNext.addEventListener("click", function () {
+        renderQuestion();
+      });
+
+      btnShowChinese.addEventListener("click", function () {
+        showChineseEnglish();
+      });
+
+      // 初始化
+      updateXPBar();
+      updateQuestionCount();
+      renderQuestion();
+    });
+  </script>
+</body>
+</html>
